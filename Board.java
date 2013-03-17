@@ -49,7 +49,11 @@ public class Board {
     @ param playerColor - Determines which player the move is made for for chip color
 */
 
-protected void makeMove(Move m, int playerColor){}
+protected void makeMove(Move m, int playerColor){
+	if (isValid(m)){
+		
+	}
+}
 
 
 /* hasNetwork returns true if this board has a network with 6 or greater length. It otherwise 
@@ -75,7 +79,16 @@ protected boolean inGoalArea(int player) {}
  *@return a DList with all the spots on the board (Move items) containing a connection to the coordinate
  */
 
-protected DList currentConnections(int x, int y){}
+protected DList currentConnections(int x, int y){
+	int piece = getSquare (x,y);
+	for (int i = 0; i<8; i++){
+		for (int j =0; j<8; j++){
+			if (getSquare(i,j) == piece){
+				
+			}
+		}
+	}
+}
 
 
 /* getSquare determines the contents of the board at a given coordinate

@@ -95,7 +95,7 @@ private Move[] validMoves(){}
 *@return a Move object if the move requested is valid
 *null otherwise
 */
-private Move isValid() {}
+private Move isValid(Move m) {}
 
 
 

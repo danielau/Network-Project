@@ -4,8 +4,10 @@
 //BOARD MODULE
 package player;
 
+import java.util.Arrays;
+
 /**
- * A class that is extended by all Network player (human and machine). 
+ * A class that is extended by all Network players (human and machine). 
  * This is the player's internal representation of the board. 
  * This representation of the board is intended for the Game Tree Search Module to get and set contents on the board.  
  */
@@ -20,12 +22,13 @@ public class Board {
     private int[][] gameBoard = new int[8][8];
     private int whitePiecesLeft = 10;
     private int blackPiecesLeft = 10;
+    priavte int[][] corner = 
 
-    #Board Corners
-    private final static int[] BOTTOM_RIGHT = {1, 1};
-    private final static int[] TOP_RIGHT = {-1, 1};
-    private final static int[] BOTTOM_LEFT = {1, -1};
-    private final static int[] TOP_LEFT = {-1, -1};
+//Board Corners
+    private final static int[] BOTTOM_RIGHT = {7, 7};
+    private final static int[] TOP_RIGHT = {7, 0};
+    private final static int[] BOTTOM_LEFT = {0, 7};
+    private final static int[] TOP_LEFT = {0, 0};
 
 // More Fields to include : Goal Areas, Rows, Columns, Diagonals
 
@@ -37,6 +40,127 @@ public class Board {
 			}
 		}
 	}
+//DO END CHECKING FOR THESE??
+ private int[] getColumn(int x){
+	 int[] col = new int[8];
+	 for (int j =0; j<8; j++){
+		 col[j] = getSquare(x,j);
+	 }
+ }
+ 
+ private int[] getRow(int y){
+	 int[] row = new int[8];
+	 for (int i=0; i<8; i++){
+		 row[i] = getSquare(i, y);
+	 }
+ }
+ 
+ private DList getDiagonals(int x, int y){
+	 DList diagonals = new DList();
+	 //up left
+	 i=x-1;
+	 j=y-1;
+	 while(i>0 && j>0){
+		 diagonals.insertBack(getSquare(i,j));
+		 i--;
+		 j--;
+	 }
+	 //up right
+	 i=x+1;
+	 j=y-1;
+	 while(i<7 && j>0){
+		 diagonals.insertBack(getSquare(i,j));
+		 i++;
+		 j--;
+	 }
+	 //low left
+	 i=x-1;
+	 j=y+1;
+	 while(i>0 && j<7){
+		 diagonals.insertBack(getSquare(i,j));
+		 i--;
+		 j++;
+	 }
+	 
+	 //low right
+	 i=x+1;
+	 j=y+1;
+	 while (i<7 && j<7){
+		 diagonals.insertBack(getSquare(i,j));
+		 i++;
+		 j++;
+	 }
+	 return diagonals;
+ }
+ 
+ private boolean isCorner(int x, int y){
+	 int[] coord = {x,y};
+	 if (Arrays.equals(coord, TOP_RIGHT) || Arrays.equals(coord, TOP_LEFT) || Arrays.equals(coord, BOTTOM_RIGHT) 
+			 || Arrays.equals(coord, BOTTOM_LEFT)){
+		 return true;
+	 }else 
+		 return false;
+ }
+ 
+ private int[][] neighbors(int x, int y){
+	 int[][] n = {{x,y+1}, {x,y-1}, {x+1,y+1}, {x+1,y-1}, {x+1,y},{x-1,y},{x-1,y-1},{x-1,y+1}};
+	 /*int[] n ={getSquare(x, y+1), getSquare(x,y-1), getSqaure(x+1,y+1), getSquare(x+1,y-1), 
+			 getSquare(x+1,y), getSquare(x-1,y),getSquare(x-1,y-1), getSquare(x-1,y+1)};*/
+	 return n;
+ }
+ 
+ private boolean isClustered(int x, int y){
+	 int playerColor = getSquare(x,y);
+	 int[][] n= neighbors(x,y);
+	 for (int i =0; i<neighbors(x,y).length;i++){
+		 if (getSquare(n[i][0],n[i][1])== playerColor){
+			 int[][] b = neighbors()
+		 }
+	 }
+ }
+ 
+//VALID MOVES MODULE
+
+
+/*Uses the rules of the game and positions of the current chips
+*to generate a list of valid moves
+*@return an array of Move objects which represent valid moves for the current game situation
+*/
+private DList validMoves(int playerColor){
+	//Implemented for add move type only
+	DList moves = new DList();
+	for (int i = 0; i<8; i++){
+		for (int j =0 j<8;j++){
+			Move m = new Move(i,j)
+			if(isValid(m,playerColor)){
+				moves.insertBack(m);
+			}
+		}
+	}
+	
+}
+
+/*Determines whether a move is valid or not
+*@return a Move object if the move requested is valid
+*null otherwise
+*/
+private Move isValid(Move m, int playerColor) {
+	//implemented for add move type only
+	if (getSquare(m.x1,m.y1) == -1 && !isCorner(m.x1,m,y1)){
+		if (playerColor == BLACK){
+			if (!inGoalArea(WHITE) && !isClustered(m.x1,m.y1,BLACK)){
+				return true;
+			}
+		}else if (playerColor == WHITE){
+			if (!inGoalArea(BLACK) && !isClustered(m.x1,m.y1,WHITE)){
+				return true;
+			}
+		}else
+			return false;
+	}
+	return false;
+	
+}
 
 //Methods to Include - makeMove, getSquare, hasNetwork, inGoalArea, currentConnections
 // More Methods - getRows, getColumns, isCorner, isOccupied, getSurroundings, getDiagonals
@@ -65,12 +189,37 @@ protected void makeMove(Move m, int playerColor){
 protected boolean hasNetwork (int player) {}
 
 
-/* isGoalArea is called on this board and takes in a player. It checks if that player has
+/* inGoalArea is called on this board and takes in a player. It checks if that player has
     any chips in the goal area. 
     @param player is the player we are checking if they have pieces in the goal area. 
     @returns true if there are pieces in the goal area or false if there are none. 
 */
-protected boolean inGoalArea(int player) {}
+protected boolean inGoalArea(int player) {
+	if (player == Board.WHITE){
+		for (int i:getRow(0)){
+			if (i == Board.WHITE){
+				return true;
+			}
+		}
+		for (int i:getRow(7)){
+			if (i==Board.WHITE){
+				return true;
+			}
+		}
+	}else if (player == Board.BLACK){
+		for (int i:getCol(0)){
+			if (i == Board.BLACK){
+				return true;
+			}
+		}
+		for (int i:getCol(7)){
+			if (i==Board.BLACK){
+				return true;
+			}
+		}
+	}else
+	return false;
+}
 
 /* currentConnections returns a DList with all the pieces containing a connection to given coordinate. 
  * This is used to build a network. 

@@ -81,25 +81,5 @@ public class MachinePlayer extends Player {
 private int evaluateBoard(Board b){}
 
 
-
-// VALID MOVES MODULE
-
-
-/*Uses the rules of the game and positions of the current chips
-*to generate a list of valid moves
-*@return an array of Move objects which represent valid moves for the current game situation
-*/
-private Move[] validMoves(){}
-
-/*Determines whether a move is valid or not
-*@return a Move object if the move requested is valid
-*null otherwise
-*/
-private Move isValid(Move m) {}
-
-
-
-
-
 }
 }

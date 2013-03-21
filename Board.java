@@ -41,56 +41,82 @@ public class Board {
 		}
 	}
 //DO END CHECKING FOR THESE??
- private int[] getColumn(int x){
-	 int[] col = new int[8];
-	 for (int j =0; j<8; j++){
-		 col[j] = getSquare(x,j);
+ /**Gets all chips in the specified column
+  * @param x the x coordinate of the column being accesseed
+  * @return an array of ints representing every chip in the row
+  */
+ private DList getColumn(int x){
+	 DList col = new DList();
+	 for (int j =0; j<8;j++){
+		 int[] item = {x, j};
+		 col.insertBack(item);
 	 }
+	 return col;
  }
  
- private int[] getRow(int y){
-	 int[] row = new int[8];
-	 for (int i=0; i<8; i++){
-		 row[i] = getSquare(i, y);
+ /**
+  * Gets all chips in the specified row
+  * @param y the y coordinate of the row being accessed
+  * @return an array of ints representing every chip in the row
+  */
+ private DList getRow(int y){
+	 DList row = new DList();
+	 for (int i=0;i<8;i++){
+		 int[] item = {i,y};
+		 row.insertBack(item);
 	 }
+	 return row;
  }
- 
- private DList getDiagonals(int x, int y){
-	 DList diagonals = new DList();
+ /**
+  * Gets all the position of the diagonals of the specified point, in all 4 directions
+  * @param x the x coordinate of the point you wish to start at
+  * @param y the y coordinate of the point you wish to start at
+  * @return a list of ints representing every position in the diagonals
+  */
+ private DList[] getDiagonals(int x, int y){
+	 DList[] diags = new DList[4];
 	 //up left
+	 DList upLeft = new DList();
 	 i=x-1;
 	 j=y-1;
+	 int[] item = {i,j};
 	 while(i>0 && j>0){
-		 diagonals.insertBack(getSquare(i,j));
+		 upLeft.insertBack(item);
 		 i--;
 		 j--;
 	 }
+	 diags[0] = upLeft;
 	 //up right
+	 DList upRight = new DList();
 	 i=x+1;
 	 j=y-1;
 	 while(i<7 && j>0){
-		 diagonals.insertBack(getSquare(i,j));
+		 upRight.insertBack(item);
 		 i++;
 		 j--;
 	 }
+	 diags[1] = upRight;
 	 //low left
+	 DList lowLeft = new DList();
 	 i=x-1;
 	 j=y+1;
 	 while(i>0 && j<7){
-		 diagonals.insertBack(getSquare(i,j));
+		 lowLeft.insertBack(item);
 		 i--;
 		 j++;
 	 }
-	 
+	 diags[2] = lowLeft;
 	 //low right
+	 DList lowRight= new DList();
 	 i=x+1;
 	 j=y+1;
 	 while (i<7 && j<7){
-		 diagonals.insertBack(getSquare(i,j));
+		 lowRight.insertBack(item);
 		 i++;
 		 j++;
 	 }
-	 return diagonals;
+	 diags[3] = lowRight;
+	 return diags;
  }
  
  private boolean isCorner(int x, int y){
@@ -207,31 +233,34 @@ protected boolean hasNetwork (int player) {}
     @returns true if there are pieces in the goal area or false if there are none. 
 */
 protected boolean inGoalArea(int player) {
-	if (player == Board.WHITE){
-		for (int i:getRow(0)){
-			if (i == Board.WHITE){
-				return true;
-			}
-		}
-		for (int i:getRow(7)){
-			if (i==Board.WHITE){
-				return true;
-			}
-		}
-	}else if (player == Board.BLACK){
-		for (int i:getColumn(0)){
-			if (i == Board.BLACK){
-				return true;
-			}
-		}
-		for (int i:getColumn(7)){
-			if (i==Board.BLACK){
-				return true;
-			}
-		}
-	}else
-	return false;
-}
+	boolean goalarea1 = false;
+        boolean goalarea2 = false;
+        if (player == WHITE){
+        	for (int y = 1; y < 7; y++){
+        		if (this.getSquare(0,y) == WHITE){
+        		     	goalarea1 = true;
+        		}
+        	}
+        	for (int y = 1; y < 7; y++){
+        		if (this.getSquare(7,y) == player){
+        			goalarea2 = true;
+        		}
+        	}
+        }
+        if (player == BLACK){
+        	for (int x = 1; x < 7; x++){
+        		if(this.getSquare(x,0) == BLACK){
+        			goalarea1 = true;
+        		}
+        	}
+        	for (int x = 1; x < 7; x++){
+        		if (this.getSquare(x,7) == BLACK){
+        			goalarea2 = true;
+        		}
+        	}
+        }
+        return goalarea1 && goalarea2;
+    }
 
 /* currentConnections returns a DList with all the pieces containing a connection to given coordinate. 
  * This is used to build a network. 
@@ -241,14 +270,102 @@ protected boolean inGoalArea(int player) {
  */
 
 protected DList currentConnections(int x, int y){
-	int piece = getSquare (x,y);
-	for (int i = 0; i<8; i++){
-		for (int j =0; j<8; j++){
-			if (getSquare(i,j) == piece){
-				
-			}
-		}
+	
+	int piece = getSquare(x,y);
+	int opp;
+	DList row = getRow(x);
+	DList col = getColumn(y);
+	DList[] diagonals = getDaigonals(x,y);
+	DList connections = new DList();
+	
+	if (piece == 0){
+		opp = 1;
+	}else if (piece == 1){
+		opp=0;
+	}else{  //the positinon is empty, so can have no connections
+		return connections;
 	}
+	//search through the row starting at the y 
+	//if you hit a chip of the same color, add its coordinate to the list
+	
+	//going forward in row
+	DListNode n = row.front();
+	for (int i=0; i<x;i++){
+		n=n.next();
+	}
+	
+	while (n != null){
+		if (getSquare(n.item()[0], n.item()[1]) == piece){
+			connections.insertFront(n.item);
+			break;
+		}else if (getSquare(n.item()[0], n.item()[1]) == opp){
+			break;
+		}
+		n=n.next();
+	}
+	
+	//going backward in row
+	DListNode n = row.front();
+	for (int i=0; i<x;i++){
+		n=n.next();
+	}
+	
+	while (n != null){
+		if (getSquare(n.item()[0], n.item()[1]) == piece){
+			connections.insertFront(n.item);
+			break;
+		}else if (getSquare(n.item()[0], n.item()[1]) == opp){
+			break;
+		}
+		n=n.prev();
+	}
+	
+	//going up in column
+	DListNode n = col.front();
+	for (int i=0; i<y;i++){
+		n=n.next();
+	}
+	
+	while (n != null){
+		if (getSquare(n.item()[0], n.item()[1]) == piece){
+			connections.insertFront(n.item);
+			break;
+		}else if (getSquare(n.item()[0], n.item()[1]) == opp){
+			break;
+		}
+		n=n.next();
+	}
+	
+	//going down in column
+	DListNode n = col.front();
+	for (int i=0; i<y;i++){
+		n=n.next();
+	}
+	
+	while (n != null){
+		if (getSquare(n.item()[0], n.item()[1]) == piece){
+			connections.insertFront(n.item);
+			break;
+		}else if (getSquare(n.item()[0], n.item()[1]) == opp){
+			break;
+		}
+		n=n.prev();
+	}
+	
+	//diagonals
+	for (int i=0;i<4;i++){
+		DListNode n = diagonasl[i].front();
+		while (n != null){
+			if (getSquare(n.item()[0], n.item()[1]) == piece){
+				connections.insertFront(n.item);
+				break;
+			}else if (getSquare(n.item()[0], n.item()[1]) == opp){
+				break;
+			}
+			n=n.next();
+		}	
+	}
+	return connections;
 }
 
 

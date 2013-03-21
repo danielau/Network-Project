@@ -174,10 +174,22 @@ private Move isValid(Move m, int playerColor) {
 */
 
 protected void makeMove(Move m, int playerColor){
-	if (isValid(m)){
-		
+    if (m.moveKind == Move.ADD) {
+	gameBoard[m.x1][m.y1] = playerColor;
+        		if (playerColor == Board.WHITE) {
+            		whitePiecesLeft--;
+        		}
+        		if (playerColor == Board.BLACK) {
+           			 blackPiecesLeft--;
+        		}
 	}
+	else if (m.moveKind == Move.STEP) {
+		gameBoard[m.x2][m.y2] = Board.EMPTY; 
+		gameBoard[m.x1][m.y1] = playerColor; 
 }
+
+}
+
 
 
 /* hasNetwork returns true if this board has a network with 6 or greater length. It otherwise 
@@ -207,12 +219,12 @@ protected boolean inGoalArea(int player) {
 			}
 		}
 	}else if (player == Board.BLACK){
-		for (int i:getCol(0)){
+		for (int i:getColumn(0)){
 			if (i == Board.BLACK){
 				return true;
 			}
 		}
-		for (int i:getCol(7)){
+		for (int i:getColumn(7)){
 			if (i==Board.BLACK){
 				return true;
 			}

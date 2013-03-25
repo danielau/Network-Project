@@ -29,7 +29,8 @@ public class Board {
     private final static int[] BOTTOM_LEFT = {0, 7};
     private final static int[] TOP_LEFT = {0, 0};
 
-// More Fields to include : Goal Areas, Rows, Columns, Diagonals
+// More Fields to include : Goal Areas, Rows, Columns, Diagonals 
+    private static final static DList GOAL = new DList();
 
 
      public Board() {
@@ -264,37 +265,39 @@ protected boolean inGoalArea(int player) {
     
     
     
- private DList goalList(int player) {
+ private DList goalPieces (int player, int x) {
         DList piecesInGoalArea = new DList();
         for (int y = 1; y < 7; y++) {
             if (player == WHITE) {
-            	int x = 0;
                 if (this.getSquare(x, y) == WHITE) {
                     int[] coordinate = {x, y};
                     piecesInGoalArea.insertBack(coordinate);
                 }
-            } else{
-            	int x = 0;
-                if (this.getSquare(y, x) == player) {
-                    int[] coordinate = {y, x};
-                    PiecesInGoalArea.insertBack(coordinate);
-        }
-        for (int y = 1; y < 7; y++){
-        	if (player == WHITE){
-        		int x = 7
-        		if (this.getSquare(x,y) == WHITE){
-        		int[] coordinate = {x,y};
-        		piecesInGoalArea.insertBack(coordinate);
-        		}
-        	} else {
+            } else{   
                 if (this.getSquare(y, x) == player) {
                     int[] coordinate = {y, x};
                     piecesInGoalArea.insertBack(coordinate);
-                }
+       		 }
             }
         }
         return piecesInGoalArea;
      }
+     
+     
+     
+ private HashTable goalAreaTable(DList goalPieces) {
+        HashTable connections = new HashTable(goalPieces).length());
+        DListNode current = goalPieces.front();
+        while (current != null) {
+                connections.insert(Arrays.hashCode((int[]) current.item()), GOAL);
+                current = current.next();
+            }
+        
+        return connections;
+     }
+    
+    
+    
     
 
 /* currentConnections returns a DList with all the pieces containing a connection to given coordinate. 

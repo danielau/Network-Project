@@ -22,7 +22,6 @@ public class Board {
     private int[][] gameBoard = new int[8][8];
     private int whitePiecesLeft = 10;
     private int blackPiecesLeft = 10;
-    priavte int[][] corner = 
 
 //Board Corners
     private final static int[] BOTTOM_RIGHT = {7, 7};
@@ -34,9 +33,9 @@ public class Board {
 
 
      public Board() {
-		for (int i = 0; i<8; i++) {
+		for (int x = 0; x<8; x++) {
 			for (int y =0; y<8; y++) {
-				gameBoard[i][y] = Board.EMPTY;
+				gameBoard[x][y] = Board.EMPTY;
 			}
 		}
 	}
@@ -261,6 +260,42 @@ protected boolean inGoalArea(int player) {
         }
         return goalarea1 && goalarea2;
     }
+    
+    
+    
+    
+ private DList goalList(int player) {
+        DList piecesInGoalArea = new DList();
+        for (int y = 1; y < 7; y++) {
+            if (player == WHITE) {
+            	int x = 0;
+                if (this.getSquare(x, y) == WHITE) {
+                    int[] coordinate = {x, y};
+                    piecesInGoalArea.insertBack(coordinate);
+                }
+            } else{
+            	int x = 0;
+                if (this.getSquare(y, x) == player) {
+                    int[] coordinate = {y, x};
+                    PiecesInGoalArea.insertBack(coordinate);
+        }
+        for (int y = 1; y < 7; y++){
+        	if (player == WHITE){
+        		int x = 7
+        		if (this.getSquare(x,y) == WHITE){
+        		int[] coordinate = {x,y};
+        		piecesInGoalArea.insertBack(coordinate);
+        		}
+        	} else {
+                if (this.getSquare(y, x) == player) {
+                    int[] coordinate = {y, x};
+                    piecesInGoalArea.insertBack(coordinate);
+                }
+            }
+        }
+        return piecesInGoalArea;
+     }
+    
 
 /* currentConnections returns a DList with all the pieces containing a connection to given coordinate. 
  * This is used to build a network. 

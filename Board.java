@@ -31,6 +31,17 @@ public class Board {
 
 // More Fields to include : Goal Areas, Rows, Columns, Diagonals 
     private static final static DList GOAL = new DList();
+    
+//Directions
+    private final static int[] TO_TOP = {0, 1};
+    private final static int[] TO_BOTTOM = {0, -1};
+    private final static int[] TO_LEFT = {-1, 0};
+    private final static int[] TO_RIGHT = {1, 0};
+    private final static int[] TO_BOTTOM_RIGHT = {1, 1};
+    private final static int[] TO_TOP_RIGHT = {-1, 1};
+    private final static int[] TO_BOTTOM_LEFT = {1, -1};
+    private final static int[] TO_TOP_LEFT = {-1, -1};
+
 
 
      public Board() {
@@ -295,6 +306,38 @@ protected boolean inGoalArea(int player) {
         
         return connections;
      }
+     
+     
+     
+ private int[] direction (int[] prev, int[] curr) {
+        int deltaX = curr[0] - prev[0];
+        int deltaY = curr[1] - prev[1];
+        if (deltaX > 0) {
+            if (deltaY == 0) {
+                return TO_RIGHT;
+            }else if (deltaY > 0) {
+                return TO_BOTTOM_RIGHT;
+            }else {
+                return TO_BOTTOM_LEFT;
+            }
+        }else if (deltaX == 0) {
+            if (deltaY > 0) {
+                return TO_BOTTOM;
+            }else {
+                return TO_TOP;
+            }
+        }else  {
+            if (deltaY == 0) {
+                return TO_LEFT;
+            }else if (deltaY > 0) {
+                return TO_TOP_LEFT;
+            }else {
+                return TO_TOP_RIGHT;
+            }
+        }
+    }
+    
+     
     
     
     

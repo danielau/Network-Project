@@ -323,7 +323,7 @@ protected boolean inGoalArea(int player) {
      
      
  private HashTable goalAreaTable(DList goalPieces) {
-        HashTable connections = new HashTable(goalPieces).length());
+        HashTable connections = new HashTable(goalPieces.length());
         DListNode current = goalPieces.front();
         while (current != null) {
                 connections.insert(Arrays.hashCode((int[]) current.item()), GOAL);

@@ -223,8 +223,7 @@ protected void makeMove(Move m, int playerColor){
 	else if (m.moveKind == Move.STEP) {
 		gameBoard[m.x2][m.y2] = Board.EMPTY; 
 		gameBoard[m.x1][m.y1] = playerColor; 
-}
-
+	}
 }
 
 
@@ -236,6 +235,33 @@ protected void makeMove(Move m, int playerColor){
 *false otherwise
 */
 protected boolean hasNetwork (int player) {}
+	 if (player == WHITE){
+	 	if (this.whitePiecesLeft > 4 || !inGoalArea(player)) {
+            return false;
+        	}
+	 }
+	 if (player == BLACK){
+	 	if (this.blackPiecesLeft > 4 || !inGoalArea(player)){
+	 		return false;
+	 	}
+	 }
+        else {
+            DList startGoals = this.goalPieces(player, 0);
+            DList endGoals = this.goalPieces(player, 7);
+            if (player == WHITE){
+            if (startGoals.length() + endGoals.length() > 6 - this.whitePiecesLeft) {
+                    return false;
+            }
+            }
+            if (player == BLACK){
+            	 if (startGoals.length() + endGoals.length() > 6 - this.blackPiecesLeft) {
+                   return false;
+            }
+            }
+            
+	
+	
+	
 
 
 /* inGoalArea is called on this board and takes in a player. It checks if that player has

@@ -265,7 +265,7 @@ protected boolean hasNetwork (int playerColor){
                     currentNetworkTracker.insert(Arrays.hashCode(firstCoordinate), BEENHERE); // Visited this coordinate already
                     DList connectionsToVisit = this.currentConnections(firstCoordinate[0], firstCoordinate[1]);
                     possibleConnections.insert(Arrays.hashCode(firstCoordinate), connectionsToVisit);
-                    if (travel(firstCoordinate, 2, start,end,possibleConnections,currentNetworkTracker, true, null)) {
+                    if (travel(firstCoordinate, 2, start,end,possibleConnections,currentNetworkTracker,)) {
                         return true;
                     }
                     first = first.next();

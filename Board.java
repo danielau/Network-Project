@@ -32,18 +32,6 @@ public class Board {
 // More Fields to include : Goal Areas, Rows, Columns, Diagonals 
     private static final Object GOAL = new Object();
     private static final Object BEENHERE = new Object();
-    
-//Directions
-    private final static int[] TO_TOP = {0, 1};
-    private final static int[] TO_BOTTOM = {0, -1};
-    private final static int[] TO_LEFT = {-1, 0};
-    private final static int[] TO_RIGHT = {1, 0};
-    private final static int[] TO_BOTTOM_RIGHT = {1, 1};
-    private final static int[] TO_TOP_RIGHT = {-1, 1};
-    private final static int[] TO_BOTTOM_LEFT = {1, -1};
-    private final static int[] TO_TOP_LEFT = {-1, -1};
-
-
 
      public Board() {
 		for (int x = 0; x<8; x++) {
@@ -211,19 +199,19 @@ private Move isValid(Move m, int playerColor) {
     @ param playerColor - Determines which player the move is made for for chip color
 */
 
-protected void makeMove(Move m, int player){
+protected void makeMove(Move m, int playerColor){
     if (m.moveKind == Move.ADD) {
-	gameBoard[m.x1][m.y1] = player;
-        		if (player == Board.WHITE) {
+	gameBoard[m.x1][m.y1] = playerColor;
+        		if (playerColor == Board.WHITE) {
             		whitePiecesLeft--;
         		}
-        		if (player == Board.BLACK) {
+        		if (playerColor == Board.BLACK) {
            			 blackPiecesLeft--;
         		}
 	}
 	else if (m.moveKind == Move.STEP) {
 		gameBoard[m.x2][m.y2] = Board.EMPTY; 
-		gameBoard[m.x1][m.y1] = player; 
+		gameBoard[m.x1][m.y1] = playerColor; 
 	}
 }
 
@@ -237,77 +225,115 @@ protected void makeMove(Move m, int player){
 */
 	    
 
-protected boolean hasNetwork (int player){ 
-	 if (player == WHITE){
-	 	if (this.whitePiecesLeft > 4 || !inGoalArea(player)) {
+protected boolean hasNetwork (int playerColor){ 
+	 if (playerColor == WHITE){
+	 	if (this.whitePiecesLeft > 4 || !inGoalArea(playerColor)) {
             return false;
         	}
 	 }
-	 if (player == BLACK){
-	 	if (this.blackPiecesLeft > 4 || !inGoalArea(player)){
+	 if (playerColor == BLACK){
+	 	if (this.blackPiecesLeft > 4 || !inGoalArea(playerColor)){
 	 		return false;
 	 	}
 	 }
-        else {
-            int[][] traveled = new int[0][2];
-	                if (player == WHITE) {
-	                        for (int i = 1; i <= 6; i++) {
-	                                if (BOARD.gameBoard[0][i] == WHITE) {
-	                                        if (travel(0, i, player, 8, traveled)) {
-	                                                return true;
-	                                        }
-	                                }
-	                        }
-	                } else if (player == BLACK) {
-	                        for (int i = 1; i <= 6; i++) {
-	                                if (BOARD.gameBoard[i][0] == BLACK) {
-	                                        if (travel(i, 0, player, 8, traveled)) {
-	                                                return true;
-	                                        }
-	                                }
-	                        }
-	                }
-	                return false;
-        }
-}
-	
-
-
-private boolean travel(int x, int y, int player, int prevDirection, int[][] traveled) {
-	                int[][] nowTraveled = new int[traveled.length + 1][2];
-	                boolean isEmpty = true;
-	                nowTraveled[traveled.length - 1][0] = x;
-	                nowTraveled[traveled.length - 1][1] = y;
-	                if ((color == WHITE && x == 7) || (color == BLACK && y == 7)) {
-	                        if (nowTraveled.length >= 6) {
-	                                return true;
-	                        } else {
-	                                return false;
-	                        }
-	                
-
-
+	 else {
+		DList startGoals = this.goalPieces(player, 0);
+            	DList endGoals = this.goalPieces(player, 7);
+	 	
+	HashTable start = new HashTable(startGoals.length());
+        DListNode current = startGoals.front();
+        while (current != null) {
+                connections.insert(Arrays.hashCode((int[]) current.item()), GOAL);
+                current = current.next();
+        	}
+        HashTable end = new HashTable(endGoals.length());
+        DListNode otherCurrent = endGoals.front();
+         while (otherCurrent != null) {
+                connections.insert(Arrays.hashCode((int[]) otherCurrent.item()), GOAL);
+                otherCurrent = otherCurrent.next();
+       
+     		}	
+            HashTable possibleConnections = new HashTable(11); // Prime Number greater than 8 for all connections
+            DListNode first = startGoals.front();
+            while (first != null) {
+                    int[] firstCoordinate = (int[]) first.item();
+                    if (playerColor == WHITE){
+                    HashTable currentNetworkTracker = new HashTable(10 - this.whitePiecesLeft);
+                    }else{
+                    	HashTable currentNetworkTracker = new HashTable (10 - this.blackPiecesLeft);
+                    }
+                    currentNetworkTracker.insert(Arrays.hashCode(firstCoordinate), BEENHERE); // Visited this coordinate already
+                    DList connectionsToVisit = this.currentConnections(firstCoordinate[0], firstCoordinate[1]);
+                    possibleConnections.insert(Arrays.hashCode(firstCoordinate), connectionsToVisit);
+                    if (travel(firstCoordinate, 2, start,end,possibleConnections,currentNetworkTracker, true, null)) {
+                        return true;
+                    }
+                    first = first.next();
+            	}
+            
+                return false;
+            }
+	}
+    
+private boolean travel(int[] startCoord, int piecesUsed, HashTable start, HashTable end, HashTable connections, HashTable currentNetwork) {
+	DList currentconnections = (DList) connections.find(Arrays.hashCode(startCoord)).value();
+	DListNode counter = currentconnections.front();
+	while (counter != null){
+		boolean insideGoalArea = false;
+		next = (int[]) counter.item();
+		int nextKey = Arrays.hashCode(next);
+                
+                Entry startPosition = start.find(nextKey);
+		if (startPosition != null && startPosition.value() == GOAL) {
+		    insideGoalArea = true;
+		}
+                Entry middlePoint = currentNetwork.find(nextKey);
+		if (middlePoint == null && !insideGoalArea) {
+		    currentNetwork.insert(nextKey, BEENHERE);
+		    if (connections.find(nextKey) == null) {
+		    	DList newconnections = this.currentConnections(next[0], next[1]);
+			connections.insert(nextKey,newconnections);
+		    }
+                    Entry endPosition= end.find(nextKey);
+		    if (endPosition != null && endPosition.value() == GOAL) {
+			if (piecesUsed >= 6){
+			    return true;
+			} else
+                            currentNetwork.remove(nextKey);
+			    return false;
+		    }
+		    if (traverse(next, piecesUsed + 1, start, end, connections, currentNetwork)) {
+			return true;
+		    } else {
+                       currentNetwork.remove(nextKey);
+                    }
+		}
+                curr = curr.next();
+	}
+	return false;
+	}
+ 
 /* inGoalArea is called on this board and takes in a player. It checks if that player has
     any chips in the goal area. 
     @param player is the player we are checking if they have pieces in the goal area. 
     @returns true if there are pieces in the goal area or false if there are none. 
 */
-protected boolean inGoalArea(int player) {
+protected boolean inGoalArea(int playerColor) {
 	boolean goalarea1 = false;
         boolean goalarea2 = false;
-        if (player == WHITE){
+        if (playerColor == WHITE){
         	for (int y = 1; y < 7; y++){
         		if (this.getSquare(0,y) == WHITE){
         		     	goalarea1 = true;
         		}
         	}
         	for (int y = 1; y < 7; y++){
-        		if (this.getSquare(7,y) == player){
+        		if (this.getSquare(7,y) == playerColor){
         			goalarea2 = true;
         		}
         	}
         }
-        if (player == BLACK){
+        if (playerColor == BLACK){
         	for (int x = 1; x < 7; x++){
         		if(this.getSquare(x,0) == BLACK){
         			goalarea1 = true;
@@ -325,16 +351,16 @@ protected boolean inGoalArea(int player) {
     
     
     
- private DList goalPieces (int player, int x) {
+ private DList goalPieces (int playerColor, int x) {
         DList piecesInGoalArea = new DList();
         for (int y = 1; y < 7; y++) {
-            if (player == WHITE) {
+            if (playerColor == WHITE) {
                 if (this.getSquare(x, y) == WHITE) {
                     int[] coordinate = {x, y};
                     piecesInGoalArea.insertBack(coordinate);
                 }
             } else{   
-                if (this.getSquare(y, x) == player) {
+                if (this.getSquare(y, x) == BLACK) {
                     int[] coordinate = {y, x};
                     piecesInGoalArea.insertBack(coordinate);
        		 }
@@ -343,54 +369,7 @@ protected boolean inGoalArea(int player) {
         return piecesInGoalArea;
      }
      
-     
-     
- private HashTable goalAreaTable(DList goalPieces) {
-        HashTable connections = new HashTable(goalPieces.length());
-        DListNode current = goalPieces.front();
-        while (current != null) {
-                connections.insert(Arrays.hashCode((int[]) current.item()), GOAL);
-                current = current.next();
-            }
-        
-        return connections;
-     }
-     
-     
-     
- private int[] direction (int[] prev, int[] curr) {
-        int deltaX = curr[0] - prev[0];
-        int deltaY = curr[1] - prev[1];
-        if (deltaX > 0) {
-            if (deltaY == 0) {
-                return TO_RIGHT;
-            }else if (deltaY > 0) {
-                return TO_BOTTOM_RIGHT;
-            }else {
-                return TO_BOTTOM_LEFT;
-            }
-        }else if (deltaX == 0) {
-            if (deltaY > 0) {
-                return TO_BOTTOM;
-            }else {
-                return TO_TOP;
-            }
-        }else  {
-            if (deltaY == 0) {
-                return TO_LEFT;
-            }else if (deltaY > 0) {
-                return TO_TOP_LEFT;
-            }else {
-                return TO_TOP_RIGHT;
-            }
-        }
-    }
-    
-     
-    
-    
-    
-    
+  
 
 /* currentConnections returns a DList with all the pieces containing a connection to given coordinate. 
  * This is used to build a network. 

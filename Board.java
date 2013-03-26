@@ -284,34 +284,7 @@ private boolean travel(int x, int y, int player, int prevDirection, int[][] trav
 	                        } else {
 	                                return false;
 	                        }
-	                }
-	                toVisit = currentConnections(x, y);
-	                for (int i = 0; i < 8; i++) {
-	                        if ((toVisit[i][0] == 0 && color == WHITE)
-	                                        || (toVisit[i][1] == 0 && color == BLACK)
-	                                        || board.searchArray(traveled, toVisit[i][0],
-	                                                        toVisit[i][1]) != -1) {
-	                                toVisit[i][0] = 0;
-	                                toVisit[i][1] = 0;
-	                        }
-	                        if (!(toVisit[i][0] == 0 && toVisit[i][1] == 0)) {
-	                                isEmpty = false;
-	                        }
-                }
-	                if (isEmpty) {
-	                        return false;
-	                }
-	                for (int j = 0; j < 8; j++) {
-	                        if (!(toVisit[j][0] == 0 && toVisit[j][1] == 0)) {
-	                                if (travel(toVisit[j][0], toVisit[j][1], player, j, nowTraveled)) {
-	                                        return true;
-	                                }
-	                        }
-	                }
-	                return false;
-	        }
-
-
+	                
 
 
 /* inGoalArea is called on this board and takes in a player. It checks if that player has

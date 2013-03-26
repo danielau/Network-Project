@@ -30,7 +30,8 @@ public class Board {
     private final static int[] TOP_LEFT = {0, 0};
 
 // More Fields to include : Goal Areas, Rows, Columns, Diagonals 
-    private static final static DList GOAL = new DList();
+    private static final Object GOAL = new Object();
+    private static final Object BEENHERE = new Object();
     
 //Directions
     private final static int[] TO_TOP = {0, 1};
@@ -210,19 +211,19 @@ private Move isValid(Move m, int playerColor) {
     @ param playerColor - Determines which player the move is made for for chip color
 */
 
-protected void makeMove(Move m, int playerColor){
+protected void makeMove(Move m, int player){
     if (m.moveKind == Move.ADD) {
-	gameBoard[m.x1][m.y1] = playerColor;
-        		if (playerColor == Board.WHITE) {
+	gameBoard[m.x1][m.y1] = player;
+        		if (player == Board.WHITE) {
             		whitePiecesLeft--;
         		}
-        		if (playerColor == Board.BLACK) {
+        		if (player == Board.BLACK) {
            			 blackPiecesLeft--;
         		}
 	}
 	else if (m.moveKind == Move.STEP) {
 		gameBoard[m.x2][m.y2] = Board.EMPTY; 
-		gameBoard[m.x1][m.y1] = playerColor; 
+		gameBoard[m.x1][m.y1] = player; 
 	}
 }
 
@@ -234,7 +235,9 @@ protected void makeMove(Move m, int playerColor){
 *@return true is this board has a network with 6 or greater length
 *false otherwise
 */
-protected boolean hasNetwork (int player) {}
+	    
+
+protected boolean hasNetwork (int player){ 
 	 if (player == WHITE){
 	 	if (this.whitePiecesLeft > 4 || !inGoalArea(player)) {
             return false;
@@ -246,22 +249,69 @@ protected boolean hasNetwork (int player) {}
 	 	}
 	 }
         else {
-            DList startGoals = this.goalPieces(player, 0);
-            DList endGoals = this.goalPieces(player, 7);
-            if (player == WHITE){
-            if (startGoals.length() + endGoals.length() > 6 - this.whitePiecesLeft) {
-                    return false;
-            }
-            }
-            if (player == BLACK){
-            	 if (startGoals.length() + endGoals.length() > 6 - this.blackPiecesLeft) {
-                   return false;
-            }
-            }
-            
+            int[][] traveled = new int[0][2];
+	                if (player == WHITE) {
+	                        for (int i = 1; i <= 6; i++) {
+	                                if (BOARD.gameBoard[0][i] == WHITE) {
+	                                        if (travel(0, i, player, 8, traveled)) {
+	                                                return true;
+	                                        }
+	                                }
+	                        }
+	                } else if (player == BLACK) {
+	                        for (int i = 1; i <= 6; i++) {
+	                                if (BOARD.gameBoard[i][0] == BLACK) {
+	                                        if (travel(i, 0, player, 8, traveled)) {
+	                                                return true;
+	                                        }
+	                                }
+	                        }
+	                }
+	                return false;
+        }
+}
 	
-	
-	
+
+
+private boolean travel(int x, int y, int player, int prevDirection, int[][] traveled) {
+	                int[][] nowTraveled = new int[traveled.length + 1][2];
+	                boolean isEmpty = true;
+	                nowTraveled[traveled.length - 1][0] = x;
+	                nowTraveled[traveled.length - 1][1] = y;
+	                if ((color == WHITE && x == 7) || (color == BLACK && y == 7)) {
+	                        if (nowTraveled.length >= 6) {
+	                                return true;
+	                        } else {
+	                                return false;
+	                        }
+	                }
+	                toVisit = currentConnections(x, y);
+	                for (int i = 0; i < 8; i++) {
+	                        if ((toVisit[i][0] == 0 && color == WHITE)
+	                                        || (toVisit[i][1] == 0 && color == BLACK)
+	                                        || board.searchArray(traveled, toVisit[i][0],
+	                                                        toVisit[i][1]) != -1) {
+	                                toVisit[i][0] = 0;
+	                                toVisit[i][1] = 0;
+	                        }
+	                        if (!(toVisit[i][0] == 0 && toVisit[i][1] == 0)) {
+	                                isEmpty = false;
+	                        }
+                }
+	                if (isEmpty) {
+	                        return false;
+	                }
+	                for (int j = 0; j < 8; j++) {
+	                        if (!(toVisit[j][0] == 0 && toVisit[j][1] == 0)) {
+	                                if (travel(toVisit[j][0], toVisit[j][1], player, j, nowTraveled)) {
+	                                        return true;
+	                                }
+	                        }
+	                }
+	                return false;
+	        }
+
+
 
 
 /* inGoalArea is called on this board and takes in a player. It checks if that player has

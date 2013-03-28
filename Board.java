@@ -1,5 +1,3 @@
-/* Board.java */
-
 
 //BOARD MODULE
 package player;
@@ -140,7 +138,7 @@ public class Board {
 	 int[][] n= neighbors(x,y);
 	 for (int i =0; i<neighbors(x,y).length;i++){
 		 if (getSquare(n[i][0],n[i][1])== playerColor){
-			 int[][] b = neighbors()
+			 int[][] b = neighbors();
 		 }
 	 }
  }
@@ -156,14 +154,14 @@ private DList validMoves(int playerColor){
 	//Implemented for add move type only
 	DList moves = new DList();
 	for (int i = 0; i<8; i++){
-		for (int j =0 j<8;j++){
-			Move m = new Move(i,j)
+		for (int j =0;j<8;j++){
+			Move m = new Move(i,j);
 			if(isValid(m,playerColor)){
 				moves.insertBack(m);
 			}
 		}
 	}
-	
+
 }
 
 /*Determines whether a move is valid or not
@@ -185,7 +183,7 @@ private Move isValid(Move m, int playerColor) {
 			return false;
 	}
 	return false;
-	
+
 }
 
 //Methods to Include - makeMove, getSquare, hasNetwork, inGoalArea, currentConnections
@@ -223,7 +221,7 @@ protected void makeMove(Move m, int playerColor){
 *@return true is this board has a network with 6 or greater length
 *false otherwise
 */
-	    
+
 
 protected boolean hasNetwork (int playerColor){ 
 	 if (playerColor == WHITE){
@@ -237,9 +235,9 @@ protected boolean hasNetwork (int playerColor){
 	 	}
 	 }
 	 else {
-		DList startGoals = this.goalPieces(playerColor, 0);
-            	DList endGoals = this.goalPieces(playerColor, 7);
-	 	
+		DList startGoals = this.goalPieces(player, 0);
+            	DList endGoals = this.goalPieces(player, 7);
+
 	HashTable start = new HashTable(startGoals.length());
         DListNode current = startGoals.front();
         while (current != null) {
@@ -265,7 +263,7 @@ protected boolean hasNetwork (int playerColor){
                     currentNetworkTracker.insert(Arrays.hashCode(firstCoordinate), BEENHERE); // Visited this coordinate already
                     DList connectionsToVisit = this.currentConnections(firstCoordinate[0], firstCoordinate[1]);
                     possibleConnections.insert(Arrays.hashCode(firstCoordinate), connectionsToVisit);
-                    if (travel(firstCoordinate, 2, start,end,possibleConnections,currentNetworkTracker,)) {
+                    if (travel(firstCoordinate, 2, start,end,possibleConnections,currentNetworkTracker)) {
                         return true;
                     }
                     first = first.next();
@@ -379,14 +377,14 @@ protected boolean inGoalArea(int playerColor) {
  */
 
 protected DList currentConnections(int x, int y){
-	
+
 	int piece = getSquare(x,y);
 	int opp;
 	DList row = getRow(x);
 	DList col = getColumn(y);
 	DList[] diagonals = getDaigonals(x,y);
 	DList connections = new DList();
-	
+
 	if (piece == 0){
 		opp = 1;
 	}else if (piece == 1){
@@ -396,13 +394,13 @@ protected DList currentConnections(int x, int y){
 	}
 	//search through the row starting at the y 
 	//if you hit a chip of the same color, add its coordinate to the list
-	
+
 	//going forward in row
 	DListNode n = row.front();
 	for (int i=0; i<x;i++){
 		n=n.next();
 	}
-	
+
 	while (n != null){
 		if (getSquare(n.item()[0], n.item()[1]) == piece){
 			connections.insertFront(n.item);
@@ -412,13 +410,13 @@ protected DList currentConnections(int x, int y){
 		}
 		n=n.next();
 	}
-	
+
 	//going backward in row
 	DListNode n = row.front();
 	for (int i=0; i<x;i++){
 		n=n.next();
 	}
-	
+
 	while (n != null){
 		if (getSquare(n.item()[0], n.item()[1]) == piece){
 			connections.insertFront(n.item);
@@ -428,13 +426,13 @@ protected DList currentConnections(int x, int y){
 		}
 		n=n.prev();
 	}
-	
+
 	//going up in column
 	DListNode n = col.front();
 	for (int i=0; i<y;i++){
 		n=n.next();
 	}
-	
+
 	while (n != null){
 		if (getSquare(n.item()[0], n.item()[1]) == piece){
 			connections.insertFront(n.item);
@@ -444,13 +442,13 @@ protected DList currentConnections(int x, int y){
 		}
 		n=n.next();
 	}
-	
+
 	//going down in column
 	DListNode n = col.front();
 	for (int i=0; i<y;i++){
 		n=n.next();
 	}
-	
+
 	while (n != null){
 		if (getSquare(n.item()[0], n.item()[1]) == piece){
 			connections.insertFront(n.item);
@@ -460,7 +458,7 @@ protected DList currentConnections(int x, int y){
 		}
 		n=n.prev();
 	}
-	
+
 	//diagonals
 	for (int i=0;i<4;i++){
 		DListNode n = diagonasl[i].front();
@@ -493,11 +491,3 @@ protected int getSquare(int x, int y) {
 		}
 	 }
 }
-
-
-
-
-
-
-
-	

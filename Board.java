@@ -237,19 +237,19 @@ protected boolean hasNetwork (int playerColor){
 	 	}
 	 }
 	 else {
-		DList startGoals = this.goalPieces(player, 0);
-            	DList endGoals = this.goalPieces(player, 7);
+		DList startGoals = this.goalPieces(playerColor, 0);
+            	DList endGoals = this.goalPieces(playerColor, 7);
 	 	
 	HashTable start = new HashTable(startGoals.length());
         DListNode current = startGoals.front();
         while (current != null) {
-                connections.insert(Arrays.hashCode((int[]) current.item()), GOAL);
+                start.insert(Arrays.hashCode((int[]) current.item()), GOAL);
                 current = current.next();
         	}
         HashTable end = new HashTable(endGoals.length());
         DListNode otherCurrent = endGoals.front();
          while (otherCurrent != null) {
-                connections.insert(Arrays.hashCode((int[]) otherCurrent.item()), GOAL);
+                end.insert(Arrays.hashCode((int[]) otherCurrent.item()), GOAL);
                 otherCurrent = otherCurrent.next();
        
      		}	

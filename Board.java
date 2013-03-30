@@ -220,7 +220,18 @@ protected void makeMove(Move m, int playerColor){
 *@param player the player whose network is being determined
 *@return true is this board has a network with 6 or greater length
 *false otherwise
+* 
 */
+
+
+protected boolean hasNetwork(int playerColor){
+   /* 1. Create Start dlist
+    2. Create end dlist
+Make them hashtables
+    3. call currentconnections on the start point for max ten times
+    for each point check if in end hashtables, otherwise  
+           
+}*/
 
 
 protected boolean hasNetwork (int playerColor){ 
@@ -300,13 +311,13 @@ private boolean travel(int[] startCoord, int piecesUsed, HashTable start, HashTa
                             currentNetwork.remove(nextKey);
 			    return false;
 		    }
-		    if (traverse(next, piecesUsed + 1, start, end, connections, currentNetwork)) {
+		    if (travel(next, piecesUsed + 1, start, end, connections, currentNetwork)) {
 			return true;
 		    } else {
                        currentNetwork.remove(nextKey);
                     }
 		}
-                curr = curr.next();
+                counter = counter.next();
 	}
 	return false;
 	}

@@ -18,11 +18,16 @@ public class MachinePlayer extends Player {
   *@param color the color of the player
   */
   public MachinePlayer(int color) {
+      this(color,3);
   }
 
   // Creates a machine player with the given color and search depth.  Color is
   // either 0 (black) or 1 (white).  (White has the first move.)
   public MachinePlayer(int color, int searchDepth) {
+      this.color = color;
+      this.searchDepth = searchDepth;
+      this.opponentColor = -color + 1;
+      this.board = new Board();
   }
 
   // Returns a new move by "this" player.  Internally records the move (updates
@@ -78,7 +83,12 @@ public class MachinePlayer extends Player {
         * IS THIS A FLOAT?
         */
   
-private int evaluateBoard(Board b){}
+private int evaluateBoard(Board b){
+    if hasNetwork(){
+        return Intege
+    }
+    
+}
 
 
 }

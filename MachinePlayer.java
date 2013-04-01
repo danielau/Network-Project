@@ -9,6 +9,10 @@ package player;
 public class MachinePlayer extends Player {
     public final static int COMPUTER_WIN = 1;
     public final static int HUMAN_WIN = -1;
+    protected int color;
+    protected int searchDepth;
+    protected Board board;
+    public static final boolean COMPUTER = true;
     
     
 
@@ -18,7 +22,8 @@ public class MachinePlayer extends Player {
   *@param color the color of the player
   */
   public MachinePlayer(int color) {
-      this(color,3);
+      this.color = color;
+      board = new Board();
   }
 
   // Creates a machine player with the given color and search depth.  Color is

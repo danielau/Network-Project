@@ -184,7 +184,16 @@ public class MachinePlayer extends Player {
         * @returns an integer between -1 and 1 for likelihood of winning. 
         */
   
+<<<<<<< HEAD
 private double evaluateBoard(Board b){}
+=======
+private int evaluateBoard(Board b){
+    if hasNetwork(){
+        return Intege
+    }
+    
+}
+>>>>>>> 52c8d0ee184649fdc18a04961920878066ae4666
 
 
 }

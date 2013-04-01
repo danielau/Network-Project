@@ -1,8 +1,8 @@
-
 //BOARD MODULE
 package player;
 
 import java.util.Arrays;
+import list.*;
 
 /**
  * A class that is extended by all Network players (human and machine). 
@@ -156,7 +156,7 @@ private DList validMoves(int playerColor){
 	for (int i = 0; i<8; i++){
 		for (int j =0;j<8;j++){
 			Move m = new Move(i,j);
-			if(isValid(m,playerColor)){
+			if(isValidMove(m,playerColor)){
 				moves.insertBack(m);
 			}
 		}
@@ -168,7 +168,7 @@ private DList validMoves(int playerColor){
 *@return a Move object if the move requested is valid
 *null otherwise
 */
-private Move isValid(Move m, int playerColor) {
+protected Move isValidMove(Move m, int playerColor) {
 	//implemented for add move type only
 	if (getSquare(m.x1,m.y1) == -1 && !isCorner(m.x1,m,y1)){
 		if (playerColor == BLACK){
@@ -222,19 +222,14 @@ protected void makeMove(Move m, int playerColor){
 *false otherwise
 * 
 */
-
-
-protected boolean hasNetwork(int playerColor){
-   /* 1. Create Start dlist
+protected boolean hasNetwork (int playerColor){ 
+	   /* 1. Create Start dlist
     2. Create end dlist
 Make them hashtables
     3. call currentconnections on the start point for max ten times
     for each point check if in end hashtables, otherwise  
            
-}*/
-
-
-protected boolean hasNetwork (int playerColor){ 
+*/
 	 if (playerColor == WHITE){
 	 	if (this.whitePiecesLeft > 4 || !inGoalArea(playerColor)) {
             return false;

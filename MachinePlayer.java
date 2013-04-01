@@ -1,6 +1,7 @@
 /* MachinePlayer.java */
 
 package player;
+import list.*;
 
 /**
  *  An implementation of an automatic Network player.  Keeps track of moves
@@ -17,18 +18,23 @@ public class MachinePlayer extends Player {
     //DO NOT NEED TO ADD A FIELD
     
 
-  /*
-  * Creates a machine player with the given color.  Color is either 0 (black)
-  *or 1 (white).  (White has the first move.)
-  *@param color the color of the player
-  */
+  /**
+   * 
+   * Creates a machine player with the given color.  Color is either 0 (black)
+   *or 1 (white).  (White has the first move.)
+   *@param color the color of the player
+   */
   public MachinePlayer(int color) {
       this.color = color;
 	 // this.searchDepth = some arbitary depth
 	  board = new Board();
+  }
 
-  // Creates a machine player with the given color and search depth.  Color is
-  // either 0 (black) or 1 (white).  (White has the first move.)
+  /**Creates a machine player with the given color and search depth.  Color is
+   * either 0 (black) or 1 (white).  (White has the first move.)
+   * @param color the color of the plater
+   * @param searchDepth the depth you want to go to
+   */
   public MachinePlayer(int color, int searchDepth) {
 	  this.color = color;
 	  this.searchDepth = searchDepth;
@@ -102,29 +108,33 @@ public class MachinePlayer extends Player {
 	  //make a new move object
 	  //determine if it is valid
 	  //or just call valid moves...?
-	  DList moves = validMoves(color);
-	  DListNode moveNode = move.front();
-	  while (moveNode != null){//or isValid or whatever
-		  Board orig = board.clone();
-		  //Board tryMoveBoard = board;
-		  /*tryMove*/board.makeMove(moveNode.item());
-		 // board = tryMoveBoard; 
-		  reply = minimax(!side, depth-1, alpha, beta);
-		  board = orig;
-		  //need a bestmove class w/ a move and score.
-		  if ((side == COMPUTER) && (reply.score >= best.score)){
-			  best.move = moveNode.item();
-			  best.score = reply.score;
-			  alpha = reply.score;
-		  }else if ((side != COMPUTER) && (reply.score <= best.score)){
-			  best.move = moveNode.item();
-			  best.score = reply.score;
-			  beta = reply.score;
+	  try {
+		  DList moves = validMoves(color);
+		  DListNode moveNode = move.front();
+		  while (moveNode.isValidNode()){//or isValid or whatever
+			  Board orig = board.clone();
+			  //Board tryMoveBoard = board;
+			  /*tryMove*/board.makeMove(moveNode.item());
+			 // board = tryMoveBoard; 
+			  reply = minimax(!side, depth-1, alpha, beta);
+			  board = orig;
+			  //need a bestmove class w/ a move and score.
+			  if ((side == COMPUTER) && (reply.score >= best.score)){
+				  best.move = moveNode.item();
+				  best.score = reply.score;
+				  alpha = reply.score;
+			  }else if ((side != COMPUTER) && (reply.score <= best.score)){
+				  best.move = moveNode.item();
+				  best.score = reply.score;
+				  beta = reply.score;
+			  }
+			  if (alpha >= beta){
+				  return best;
+			  }
+			  moveNode = moveNode.next();
 		  }
-		  if (alpha >= beta){
-			  return best;
-		  }
-		  moveNode = moveNode.next();
+	  }catch (InvalidNodeException e){
+		  System.err.println(e);
 	  }
 	  return best;
 	  //create a new board with each move from valid moves one by one
@@ -174,16 +184,17 @@ public class MachinePlayer extends Player {
   }
   
   
-/*
-        * evaluateBoard gives the current Board a score. This score reflects how likely it is to win if it is positive 
-        and if it is negative, how likely the opponent is to win. 
-        * This method is underneath the Game Tree Search Module and specifically underneath the minimax interface. 
-        Minimax calls evaluateBoard after determining that the Board does not have a Network. It scores each board. 
-        between -1 and 1 to represent the outcome.  Scores closer to 1 mean the MachinePlayer is more likely to win and
-        scores closer to -1 mean the opponent is more likely to win.
-        * @param b the Board object to be evaluated.
-        * @returns an integer between -1 and 1 for likelihood of winning. 
-        */
+/**
+ * 
+ * evaluateBoard gives the current Board a score. This score reflects how likely it is to win if it is positive 
+ and if it is negative, how likely the opponent is to win. 
+ * This method is underneath the Game Tree Search Module and specifically underneath the minimax interface. 
+ Minimax calls evaluateBoard after determining that the Board does not have a Network. It scores each board. 
+ between -1 and 1 to represent the outcome.  Scores closer to 1 mean the MachinePlayer is more likely to win and
+ scores closer to -1 mean the opponent is more likely to win.
+ * @param b the Board object to be evaluated.
+ * @returns an integer between -1 and 1 for likelihood of winning. 
+ */
 private int evaluateBoard(Board b){
     if hasNetwork(){
         return Intege
@@ -191,5 +202,4 @@ private int evaluateBoard(Board b){
     
 }
 
-}
 }

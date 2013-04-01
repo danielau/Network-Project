@@ -21,10 +21,9 @@ public class MachinePlayer extends Player {
   *@param color the color of the player
   */
   public MachinePlayer(int color) {
-	  this.color = color;
+      this.color = color;
 	 // this.searchDepth = some arbitary depth
 	  board = new Board();
-  }
 
   // Creates a machine player with the given color and search depth.  Color is
   // either 0 (black) or 1 (white).  (White has the first move.)
@@ -183,18 +182,12 @@ public class MachinePlayer extends Player {
         * @param b the Board object to be evaluated.
         * @returns an integer between -1 and 1 for likelihood of winning. 
         */
-  
-<<<<<<< HEAD
-private double evaluateBoard(Board b){}
-=======
 private int evaluateBoard(Board b){
     if hasNetwork(){
         return Intege
     }
     
 }
->>>>>>> 52c8d0ee184649fdc18a04961920878066ae4666
-
 
 }
 }

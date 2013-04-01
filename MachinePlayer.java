@@ -13,6 +13,7 @@ public class MachinePlayer extends Player {
     protected int searchDepth;
     protected Board board;
     public static final boolean COMPUTER = true;
+    //THERE IS A METHOD FOR FINDING THE OPPONENT COLOR DONT NEED TO ADD A FIELD
     
 
   /*

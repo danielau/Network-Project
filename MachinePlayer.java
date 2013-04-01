@@ -14,7 +14,6 @@ public class MachinePlayer extends Player {
     protected Board board;
     public static final boolean COMPUTER = true;
     
-    
 
   /*
   * Creates a machine player with the given color.  Color is either 0 (black)
@@ -23,22 +22,24 @@ public class MachinePlayer extends Player {
   */
   public MachinePlayer(int color) {
       this.color = color;
-      board = new Board();
-  }
+	 // this.searchDepth = some arbitary depth
+	  board = new Board();
 
   // Creates a machine player with the given color and search depth.  Color is
   // either 0 (black) or 1 (white).  (White has the first move.)
   public MachinePlayer(int color, int searchDepth) {
-      this.color = color;
-      this.searchDepth = searchDepth;
-      this.opponentColor = -color + 1;
-      this.board = new Board();
+	  this.color = color;
+	  this.searchDepth = searchDepth;
+	  board = new Board();
   }
 
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    return new Move();
+	  Move best = findBest(color);
+	  board.makeMove(best,color);
+	  return best;
+	  
   } 
 
   // If the Move m is legal, records the move as a move by the opponent
@@ -46,6 +47,10 @@ public class MachinePlayer extends Player {
   // illegal, returns false without modifying the internal state of "this"
   // player.  This method allows your opponents to inform you of their moves.
   public boolean opponentMove(Move m) {
+    if (board.isValidMove(m)){
+    	board.makeMove(m,opponentColor());
+    	return true;
+    }
     return false;
   }
 
@@ -55,6 +60,10 @@ public class MachinePlayer extends Player {
   // player.  This method is used to help set up "Network problems" for your
   // player to solve.
   public boolean forceMove(Move m) {
+    if (isValidMove(m)){
+    	board.makeMove(m,color);
+    	return true;
+    }
     return false;
   }
 
@@ -73,7 +82,94 @@ public class MachinePlayer extends Player {
         * DO I NEED TO GIVE IT A BOARD OR JUST A PARTICULAR MOVE?
         * Requires a method to check Opponents progress
         */
-  private Move minimax(int side, int depth, int alpha, int beta){}
+  private BestMove minimax(int side, int depth, int alpha, int beta){
+	  BestMove best = new BestMove();
+	  BestMove reply;
+	  //WHAT IS THE POINT OF SIDE
+	  
+	  if (board.hasNetwork(color) || board.hasNetwork(opponentColor()) ||depth ==0){
+		  best.score = evaluateBoard(board);
+		  return best;
+	  }
+	  if (side == COMPUTER){
+		  best.score = alpha;
+	  }else{
+		  best.score = beta;
+	  }
+	  //go into some sort of loop
+	  //make a new move object
+	  //determine if it is valid
+	  //or just call valid moves...?
+	  DList moves = validMoves(color);
+	  DListNode moveNode = move.front();
+	  while (moveNode != null){//or isValid or whatever
+		  Board orig = board.clone();
+		  //Board tryMoveBoard = board;
+		  /*tryMove*/board.makeMove(moveNode.item());
+		 // board = tryMoveBoard; 
+		  reply = minimax(!side, depth-1, alpha, beta);
+		  board = orig;
+		  //need a bestmove class w/ a move and score.
+		  if ((side == COMPUTER) && (reply.score >= best.score)){
+			  best.move = moveNode.item();
+			  best.score = reply.score;
+			  alpha = reply.score;
+		  }else if ((side != COMPUTER) && (reply.score <= best.score)){
+			  best.move = moveNode.item();
+			  best.score = reply.score;
+			  beta = reply.score;
+		  }
+		  if (alpha >= beta){
+			  return best;
+		  }
+		  moveNode = moveNode.next();
+	  }
+	  return best;
+	  //create a new board with each move from valid moves one by one
+	  //score each board with eval board
+	  //do something with alphas and betas
+	  //do some recursive call, changing depth
+		  
+	  
+	  
+	  /*if (side == this.color){
+		  mySide = true;
+	  }else
+		  mySide = false;
+	  //lotsa stuff in between
+	  if (board.hasNetwork(color) || depth ==0){
+		  score = 1;
+	  }
+	  if (side){
+		  best score = alpha
+	  }else
+		  best score = beta;
+		  */
+	  
+  }
+ 
+  /**
+   * Uses minimax to find the best move possible
+   * May want to just put this in the chooseMove method
+   */
+  private Move findBest(int color){
+	  int alpha = -2;
+	  int beta =2;
+	  BestMove bestMove;
+	  boolean side;
+	  if (this.color == color){
+		  side = true;
+	  }else
+		  side = false;
+	  bestMove = minimax(side, searchDepth, alpha, beta);
+	  return bestMove.move;
+  }
+  private int opponentColor(){
+	  if (color == Board.WHITE){
+		  return Board.BLACK;
+	  }else 
+		  return Board.WHITE;
+  }
   
   
 /*
@@ -85,16 +181,13 @@ public class MachinePlayer extends Player {
         scores closer to -1 mean the opponent is more likely to win.
         * @param b the Board object to be evaluated.
         * @returns an integer between -1 and 1 for likelihood of winning. 
-        * IS THIS A FLOAT?
         */
-  
 private int evaluateBoard(Board b){
     if hasNetwork(){
         return Intege
     }
     
 }
-
 
 }
 }
